@@ -164,17 +164,17 @@ namespace Microsoft.AppCenter.Ingestion.Models.Serialization
             TypeDiscriminatorPropertyName = LogJsonConverter.TypeIdKey,
             IgnoreUnrecognizedTypeDiscriminators = true,
             UnknownDerivedTypeHandling = JsonUnknownDerivedTypeHandling.FailSerialization,
-            DerivedTypes =
-            {
-                new JsonDerivedType(typeof(StartServiceLog), StartServiceLog.JsonIdentifier),
-            }
         };
 
         JsonTypeInfo? IJsonTypeInfoResolver.GetTypeInfo(Type type, JsonSerializerOptions options)
         {
             if (type == typeof(Log))
             {
-                var jsonTypeInfo = LogSerializer.Default.Log;
+#pragma warning disable IL2026 // Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code
+#pragma warning disable IL3050 // Calling members annotated with 'RequiresDynamicCodeAttribute' may break functionality when AOT compiling.
+                var jsonTypeInfo = JsonTypeInfo.CreateJsonTypeInfo<Log>(options);
+#pragma warning restore IL3050 // Calling members annotated with 'RequiresDynamicCodeAttribute' may break functionality when AOT compiling.
+#pragma warning restore IL2026 // Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code
                 jsonTypeInfo.PolymorphismOptions = Options;
                 return jsonTypeInfo;
             }
