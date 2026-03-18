@@ -50,7 +50,11 @@ namespace Microsoft.AppCenter.Crashes.Utils
         /// <summary>
         /// Static lock object.
         /// </summary>
-        private readonly static object LockObject = new object();
+#if NET9_0_OR_GREATER
+        private static readonly global::System.Threading.Lock LockObject = new();
+#else
+        private static readonly object LockObject = new object();
+#endif
 
         private static ErrorLogHelper _instanceField;
 

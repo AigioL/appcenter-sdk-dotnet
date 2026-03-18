@@ -1,0 +1,10 @@
+{
+  "solution": {
+    "path": "AppCenter-SDK-Build-Windows.sln",
+    "projects": [
+      "SDK\\AppCenterAnalytics\\Microsoft.AppCenter.Analytics.WindowsDesktop\\Microsoft.AppCenter.Analytics.WindowsDesktop.csproj",
+      "SDK\\AppCenterCrashes\\Microsoft.AppCenter.Crashes.WindowsDesktop\\Microsoft.AppCenter.Crashes.WindowsDesktop.csproj",
+      "SDK\\AppCenter\\Microsoft.AppCenter.WindowsDesktop\\Microsoft.AppCenter.WindowsDesktop.csproj"
+    ]
+  }
+}

@@ -14,6 +14,9 @@ namespace Microsoft.AppCenter.Crashes.Ingestion.Models
         /// <summary>
         /// Initializes a new instance of the Binary class.
         /// </summary>
+#if USE_SYS_JSON
+        [System.Text.Json.Serialization.JsonConstructor]
+#endif
         public Binary()
         {
             CustomInit();
@@ -46,44 +49,44 @@ namespace Microsoft.AppCenter.Crashes.Ingestion.Models
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "id")]
+        [JsonProperty("id")]
         public string Id { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "startAddress")]
+        [JsonProperty("startAddress")]
         public string StartAddress { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "endAddress")]
+        [JsonProperty("endAddress")]
         public string EndAddress { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "name")]
+        [JsonProperty("name")]
         public string Name { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "path")]
+        [JsonProperty("path")]
         public string Path { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "architecture")]
+        [JsonProperty("architecture")]
         public string Architecture { get; set; }
 
         /// <summary>
         /// Gets or sets CPU primary architecture.
         /// </summary>
-        [JsonProperty(PropertyName = "primaryArchitectureId")]
+        [JsonProperty("primaryArchitectureId")]
         public long? PrimaryArchitectureId { get; set; }
 
         /// <summary>
         /// Gets or sets CPU architecture variant.
         /// </summary>
-        [JsonProperty(PropertyName = "architectureVariantId")]
+        [JsonProperty("architectureVariantId")]
         public long? ArchitectureVariantId { get; set; }
 
         /// <summary>

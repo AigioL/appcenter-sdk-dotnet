@@ -15,7 +15,11 @@ namespace Microsoft.AppCenter.Ingestion
 
         private Action<IServiceCall> _continuationAction;
 
-        private readonly object _lock = new object();
+#if NET9_0_OR_GREATER
+        private static readonly global::System.Threading.Lock _lock = new();
+#else
+        private static readonly object _lock = new object();
+#endif
 
         private bool _disposed;
 

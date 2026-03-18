@@ -15,7 +15,11 @@ namespace Microsoft.AppCenter
     {
         private const string PreferenceKeySeparator = "_";
         private const string KeyEnabled = Constants.KeyPrefix + "ServiceEnabled";
-        protected readonly object _serviceLock = new object();
+#if NET9_0_OR_GREATER
+        protected static readonly global::System.Threading.Lock _serviceLock = new();
+#else
+        protected static readonly object _serviceLock = new object();
+#endif
 
         /// <summary>
         /// Application settings.

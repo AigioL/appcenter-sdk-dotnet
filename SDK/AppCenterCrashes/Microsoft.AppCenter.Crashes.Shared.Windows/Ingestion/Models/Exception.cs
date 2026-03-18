@@ -15,6 +15,9 @@ namespace Microsoft.AppCenter.Crashes.Ingestion.Models
         /// <summary>
         /// Initializes a new instance of the Exception class.
         /// </summary>
+#if USE_SYS_JSON
+        [System.Text.Json.Serialization.JsonConstructor]
+#endif
         public Exception()
         {
             CustomInit();
@@ -53,32 +56,32 @@ namespace Microsoft.AppCenter.Crashes.Ingestion.Models
         /// <summary>
         /// Gets or sets exception type.
         /// </summary>
-        [JsonProperty(PropertyName = "type")]
+        [JsonProperty("type")]
         public string Type { get; set; }
 
         /// <summary>
         /// Gets or sets exception reason.
         /// </summary>
-        [JsonProperty(PropertyName = "message")]
+        [JsonProperty("message")]
         public string Message { get; set; }
 
         /// <summary>
         /// Gets or sets raw stack trace. Sent when the frames property is
         /// either missing or unreliable.
         /// </summary>
-        [JsonProperty(PropertyName = "stackTrace")]
+        [JsonProperty("stackTrace")]
         public string StackTrace { get; set; }
 
         /// <summary>
         /// Gets or sets stack frames. Optional.
         /// </summary>
-        [JsonProperty(PropertyName = "frames")]
+        [JsonProperty("frames")]
         public IList<StackFrame> Frames { get; set; }
 
         /// <summary>
         /// Gets or sets inner exceptions of this exception.
         /// </summary>
-        [JsonProperty(PropertyName = "innerExceptions")]
+        [JsonProperty("innerExceptions")]
         public IList<Exception> InnerExceptions { get; set; }
 
         /// <summary>
@@ -87,7 +90,7 @@ namespace Microsoft.AppCenter.Crashes.Ingestion.Models
         /// "appcenter.xamarin", "hockeysdk.cordova".
         ///
         /// </summary>
-        [JsonProperty(PropertyName = "wrapperSdkName")]
+        [JsonProperty("wrapperSdkName")]
         public string WrapperSdkName { get; set; }
 
         /// <summary>

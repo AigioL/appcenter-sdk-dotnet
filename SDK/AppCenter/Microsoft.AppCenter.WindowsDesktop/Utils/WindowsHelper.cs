@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 using System.Reflection;
@@ -17,51 +18,23 @@ namespace Microsoft.AppCenter.Utils
 
     public static class WindowsHelper
     {
-        public static bool IsRunningAsWpf { get; }
+        public static IWindowsHelper Instance
+        {
+#pragma warning disable IL2026 // Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code
+#pragma warning disable IL3050 // Calling members annotated with 'RequiresDynamicCodeAttribute' may break functionality when AOT compiling.
+            get => field ??= new DefaultWindowsHelper();
+#pragma warning restore IL3050 // Calling members annotated with 'RequiresDynamicCodeAttribute' may break functionality when AOT compiling.
+#pragma warning restore IL2026 // Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code
+            set => field = value;
+        }
 
-        public static bool IsRunningAsUwp { get; }
+        public static bool IsRunningAsWpf => Instance.IsRunningAsWpf;
 
-        public static bool IsRunningAsWinUI { get; }
+        public static bool IsRunningAsUwp => Instance.IsRunningAsUwp;
+
+        public static bool IsRunningAsWinUI => Instance.IsRunningAsWinUI;
 
         public static dynamic WpfApplication { get; }
-
-        #region IsRunningAsUwp
-
-        const long APPMODEL_ERROR_NO_PACKAGE = 15700L;
-
-        [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
-        static extern int GetCurrentPackageFullName(ref int packageFullNameLength, StringBuilder packageFullName);
-
-        private static bool _IsRunningAsUwp()
-        {
-            try
-            {
-                return Assembly.GetEntryAssembly().GetReferencedAssemblies()
-                                .Any(referencedAssembly => referencedAssembly.Name == "Windows.UI.Xaml");
-            }
-            catch (Exception e)
-            {
-                AppCenterLog.Error(AppCenterLog.LogTag, "Failed to determine whether this application is UWP or not.", e);
-            }
-
-            return false;
-        }
-        #endregion
-
-        private static bool _IsRunningAsWinUI()
-        {
-            try
-            {
-                return Assembly.GetEntryAssembly().GetReferencedAssemblies()
-                                .Any(referencedAssembly => referencedAssembly.Name == "Microsoft.UI.Xaml" || referencedAssembly.Name == "Microsoft.WinUI");
-            }
-            catch (Exception e)
-            {
-                AppCenterLog.Error(AppCenterLog.LogTag, "Failed to determine whether this application is WinUI or not.", e);
-            }
-
-            return false;
-        }
 
         #region WinEventHook
 
@@ -118,7 +91,41 @@ namespace Microsoft.AppCenter.Utils
 
         #endregion
 
-        static WindowsHelper()
+        public static bool IsAnyWindowNotMinimized() => Instance.IsAnyWindowNotMinimized();
+
+        public static string GetWinFormsProductVersion()
+        {
+            /*
+             * Application.ProductVersion returns the value from AssemblyInformationalVersion.
+             * If the AssemblyInformationalVersion is not applied to an assembly,
+             * the version number specified by the AssemblyFileVersion attribute is used instead.
+             */
+            return Application.ProductVersion;
+        }
+    }
+
+    public interface IWindowsHelper
+    {
+        bool IsRunningAsWpf { get; }
+
+        bool IsRunningAsUwp { get; }
+
+        bool IsRunningAsWinUI { get; }
+
+        bool IsAnyWindowNotMinimized();
+
+        bool AddDispatcherUnhandledExceptionEventHandler(EventHandler<UnhandledExceptionOccurredEventArgs> invokeUnhandledExceptionOccurred);
+    }
+
+#if NET5_0_OR_GREATER
+    [RequiresUnreferencedCode("Types might be removed by trimming. If the type name is a string literal, consider using Type.GetType instead.")]
+#endif
+#if NET7_0_OR_GREATER
+    [RequiresDynamicCode("Calls System.Delegate.CreateDelegate(Type, Object, MethodInfo)")]
+#endif
+    sealed class DefaultWindowsHelper : IWindowsHelper
+    {
+        public DefaultWindowsHelper()
         {
             try
             {
@@ -141,15 +148,61 @@ namespace Microsoft.AppCenter.Utils
             IsRunningAsWinUI = IsRunningAsUwp || _IsRunningAsWinUI();
         }
 
-        // Store the int corresponding to the "Minimized" state for WPF Windows
-        // This is equivalent to `System.Windows.WindowState.Minimized`
-        private static readonly int Minimized;
+        #region IsRunningAsUwp
+
+        const long APPMODEL_ERROR_NO_PACKAGE = 15700L;
+
+        [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+        static extern int GetCurrentPackageFullName(ref int packageFullNameLength, StringBuilder packageFullName);
+
+        private static bool _IsRunningAsUwp()
+        {
+            try
+            {
+                return Assembly.GetEntryAssembly().GetReferencedAssemblies()
+                                .Any(referencedAssembly => referencedAssembly.Name == "Windows.UI.Xaml");
+            }
+            catch (Exception e)
+            {
+                AppCenterLog.Error(AppCenterLog.LogTag, "Failed to determine whether this application is UWP or not.", e);
+            }
+
+            return false;
+        }
+        #endregion
+
+        private static bool _IsRunningAsWinUI()
+        {
+            try
+            {
+                return Assembly.GetEntryAssembly().GetReferencedAssemblies()
+                                .Any(referencedAssembly => referencedAssembly.Name == "Microsoft.UI.Xaml" || referencedAssembly.Name == "Microsoft.WinUI");
+            }
+            catch (Exception e)
+            {
+                AppCenterLog.Error(AppCenterLog.LogTag, "Failed to determine whether this application is WinUI or not.", e);
+            }
+
+            return false;
+        }
 
         private static Assembly GetAssembly(string name)
         {
             var assemblies = AppDomain.CurrentDomain.GetAssemblies();
             return assemblies.FirstOrDefault(assembly => assembly.GetName().Name == name);
         }
+
+        public bool IsRunningAsWpf { get; }
+
+        public bool IsRunningAsUwp { get; }
+
+        public bool IsRunningAsWinUI { get; }
+
+        public dynamic WpfApplication { get; }
+
+        // Store the int corresponding to the "Minimized" state for WPF Windows
+        // This is equivalent to `System.Windows.WindowState.Minimized`
+        public int Minimized { get; }
 
         private static Rectangle WindowsRectToRectangle(dynamic windowsRect)
         {
@@ -168,7 +221,7 @@ namespace Microsoft.AppCenter.Utils
             return Screen.AllScreens.Any(screen => screen.Bounds.IntersectsWith(windowBounds));
         }
 
-        public static bool IsAnyWindowNotMinimized()
+        public bool IsAnyWindowNotMinimized()
         {
             // If not in WPF, query the available forms
             if (WpfApplication == null)
@@ -188,14 +241,26 @@ namespace Microsoft.AppCenter.Utils
             return false;
         }
 
-        public static string GetWinFormsProductVersion()
+        public bool AddDispatcherUnhandledExceptionEventHandler(EventHandler<UnhandledExceptionOccurredEventArgs> invokeUnhandledExceptionOccurred)
         {
-            /*
-             * Application.ProductVersion returns the value from AssemblyInformationalVersion.
-             * If the AssemblyInformationalVersion is not applied to an assembly,
-             * the version number specified by the AssemblyFileVersion attribute is used instead.
-             */
-            return Application.ProductVersion;
+            if (IsRunningAsWpf)
+            {
+#pragma warning disable IL3050 // Calling members annotated with 'RequiresDynamicCodeAttribute' may break functionality when AOT compiling.
+                var eventInfo = WindowsHelper.WpfApplication.GetType().GetEvent("DispatcherUnhandledException");
+#pragma warning restore IL3050 // Calling members annotated with 'RequiresDynamicCodeAttribute' may break functionality when AOT compiling.
+
+                EventHandler<object> eventHandler = (sender, eventArgs) =>
+                {
+                    var exceptionProperty = eventArgs.GetType().GetProperty("Exception");
+                    var exception = (Exception)exceptionProperty.GetValue(eventArgs);
+                    invokeUnhandledExceptionOccurred(sender, new UnhandledExceptionOccurredEventArgs(exception));
+                };
+
+                var runtimeDelegate = Delegate.CreateDelegate(eventInfo.EventHandlerType, eventHandler.Target, eventHandler.Method);
+                eventInfo.AddEventHandler(WindowsHelper.WpfApplication, runtimeDelegate);
+                return true;
+            }
+            return false;
         }
     }
 }

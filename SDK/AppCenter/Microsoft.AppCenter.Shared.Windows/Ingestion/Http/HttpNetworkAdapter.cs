@@ -15,7 +15,11 @@ namespace Microsoft.AppCenter.Ingestion.Http
     {
         internal const string ContentTypeValue = "application/json; charset=utf-8";
         private HttpClient _httpClient;
-        private readonly object _lockObject = new object();
+#if NET9_0_OR_GREATER
+        private static readonly global::System.Threading.Lock _lockObject = new();
+#else
+        private static readonly object _lockObject = new object();
+#endif
 
         // Prepare an HTTP message handler for configuring the TLS protocol.
         internal static readonly Func<HttpMessageHandler> HttpMessageHandlerOverride;

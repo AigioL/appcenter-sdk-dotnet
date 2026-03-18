@@ -10,7 +10,9 @@ namespace Microsoft.AppCenter.Ingestion.Models
     /// <summary>
     /// Log type for sending information about which services have been started
     /// </summary>
+#if !USE_SYS_JSON
     [JsonObject(JsonIdentifier)]
+#endif
     public class StartServiceLog : Log
     {
         internal const string JsonIdentifier = "startService";
@@ -50,7 +52,7 @@ namespace Microsoft.AppCenter.Ingestion.Models
         /// Gets or sets the list of services of the MobileCenter Start API
         /// call.
         /// </summary>
-        [JsonProperty(PropertyName = "services")]
+        [JsonProperty("services")]
         public IList<string> Services { get; set; }
 
         /// <summary>

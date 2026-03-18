@@ -1,22 +1,34 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+#if !USE_SYS_JSON
 using System;
 using System.Collections.Generic;
 using System.Reflection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+#endif
 
 namespace Microsoft.AppCenter.Ingestion.Models.Serialization
 {
-    public class LogJsonConverter : JsonConverter
+    public class LogJsonConverter
+#if !USE_SYS_JSON
+        : JsonConverter
+#endif
     {
+#if !USE_SYS_JSON
         private readonly Dictionary<string, Type> _logTypes = new Dictionary<string, Type>();
-        private readonly object _jsonConverterLock = new object();
+#if NET9_0_OR_GREATER
+        private static readonly global::System.Threading.Lock _jsonConverterLock = new();
+#else
+        private static readonly object _jsonConverterLock = new object();
+#endif
         private static readonly JsonSerializerSettings SerializationSettings;
+#endif
 
         internal const string TypeIdKey = "type";
 
+#if !USE_SYS_JSON
         static LogJsonConverter()
         {
             SerializationSettings = new JsonSerializerSettings
@@ -72,5 +84,6 @@ namespace Microsoft.AppCenter.Ingestion.Models.Serialization
             jsonObject.Add(TypeIdKey, JToken.FromObject(attribute.Id));
             writer.WriteRawValue(jsonObject.ToString());
         }
+#endif
     }
 }

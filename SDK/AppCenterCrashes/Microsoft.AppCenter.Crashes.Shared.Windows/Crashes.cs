@@ -17,7 +17,11 @@ namespace Microsoft.AppCenter.Crashes
 {
     public partial class Crashes : AppCenterService
     {
+#if NET9_0_OR_GREATER
+        private static readonly global::System.Threading.Lock CrashesLock = new();
+#else
         private static readonly object CrashesLock = new object();
+#endif
 
         private static volatile Crashes _instanceField;
 
@@ -30,6 +34,9 @@ namespace Microsoft.AppCenter.Crashes
             LogSerializer.AddLogType(ManagedErrorLog.JsonIdentifier, typeof(ManagedErrorLog));
             LogSerializer.AddLogType(ErrorAttachmentLog.JsonIdentifier, typeof(ErrorAttachmentLog));
             LogSerializer.AddLogType(HandledErrorLog.JsonIdentifier, typeof(HandledErrorLog));
+#if USE_SYS_JSON
+            LogSerializer.AddLogType(CrashesJsonSerializerContext.Default);
+#endif
         }
 
         /// <summary>
@@ -486,4 +493,11 @@ namespace Microsoft.AppCenter.Crashes
             Instance = null;
         }
     }
+
+#if NET7_0_OR_GREATER
+    public partial class Crashes : IAppCenterService2
+    {
+        static IAppCenterService IAppCenterService2.Instance => Instance;
+    }
+#endif
 }

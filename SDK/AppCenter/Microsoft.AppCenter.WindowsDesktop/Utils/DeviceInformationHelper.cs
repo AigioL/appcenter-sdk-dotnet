@@ -3,9 +3,14 @@
 
 using System;
 using System.Diagnostics;
+#if USE_WMI_LIGHT
+using WmiLight;
+#else
 using System.Management;
+#endif
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Linq;
 
 namespace Microsoft.AppCenter.Utils
 {
@@ -15,14 +20,19 @@ namespace Microsoft.AppCenter.Utils
     /// </summary>
     public class DeviceInformationHelper : AbstractDeviceInformationHelper
     {
+#if !USE_WMI_LIGHT
         private IManagmentClassFactory _managmentClassFactory;
+#endif
         private const string _defaultVersion = "Unknown";
 
         public DeviceInformationHelper()
         {
+#if !USE_WMI_LIGHT
             _managmentClassFactory = ManagmentClassFactory.Instance;
+#endif
         }
 
+#if !USE_WMI_LIGHT
         /// <summary>
         /// Set the specific class factory for the management class.
         /// </summary>
@@ -31,6 +41,7 @@ namespace Microsoft.AppCenter.Utils
         {
             _managmentClassFactory = factory;
         }
+#endif
 
         protected override string GetSdkName()
         {
@@ -47,12 +58,22 @@ namespace Microsoft.AppCenter.Utils
         {
             try
             {
+#if USE_WMI_LIGHT
+                using WmiConnection con = new();
+                var q = con.CreateQuery("SELECT Model FROM Win32_ComputerSystem");
+                foreach (var it in q)
+                {
+                    var model = it.TryGetValue("Model")?.ToString();
+                    return string.IsNullOrEmpty(model) || DefaultSystemProductName == model ? null : model;
+                }
+#else
                 var managementClass = _managmentClassFactory.GetComputerSystemClass();
                 foreach (var managementObject in managementClass.GetInstances())
                 {
                     var model = (string)managementObject["Model"];
                     return string.IsNullOrEmpty(model) || DefaultSystemProductName == model ? null : model;
                 }
+#endif
             }
             catch (UnauthorizedAccessException exception)
             {
@@ -86,13 +107,23 @@ namespace Microsoft.AppCenter.Utils
         {
             try
             {
+#if USE_WMI_LIGHT
+                using WmiConnection con = new();
+                var q = con.CreateQuery("SELECT Manufacturer FROM Win32_ComputerSystem");
+                foreach (var it in q)
+                {
+                    var manufacturer = it.TryGetValue("Manufacturer")?.ToString();
+                    return string.IsNullOrEmpty(manufacturer) || DefaultSystemManufacturer == manufacturer ? null : manufacturer;
+                }
+#else
                 var managementClass = _managmentClassFactory.GetComputerSystemClass();
                 foreach (var managementObject in managementClass.GetInstances())
                 {
                     var manufacturer = (string)managementObject["Manufacturer"];
                     return string.IsNullOrEmpty(manufacturer) || DefaultSystemManufacturer == manufacturer ? null : manufacturer;
                 }
-            } 
+#endif
+            }
             catch (UnauthorizedAccessException exception)
             {
                 AppCenterLog.Warn(AppCenterLog.LogTag, "Failed to get device OEM name with error: ", exception);
@@ -151,11 +182,24 @@ namespace Microsoft.AppCenter.Utils
         {
             try
             {
+#if NETFRAMEWORK || NETCOREAPP3_0_OR_GREATER || NETSTANDARD3_0_OR_GREATER
+                var osVersion = Environment.OSVersion.Version;
+                return $"{osVersion.Major}.{osVersion.Minor}.{osVersion.Build}";
+#elif USE_WMI_LIGHT
+                using WmiConnection con = new();
+                var q = con.CreateQuery("SELECT Version FROM Win32_OperatingSystem");
+                foreach (var it in q)
+                {
+                    var ver = it.TryGetValue("Version")?.ToString();
+                    return ver;
+                }
+#else
                 var managementClass = _managmentClassFactory.GetOperatingSystemClass();
                 foreach (var managementObject in managementClass.GetInstances())
                 {
                     return (string)managementObject["Version"];
                 }
+#endif
             }
             catch (UnauthorizedAccessException exception)
             {
@@ -245,6 +289,15 @@ namespace Microsoft.AppCenter.Utils
         {
             get
             {
+#if NET6_0_OR_GREATER
+                var processPath = Environment.ProcessPath;
+                if (string.IsNullOrWhiteSpace(processPath))
+                {
+                    var fvi = FileVersionInfo.GetVersionInfo(processPath);
+                    return fvi;
+                }
+                return null;
+#else
                 // The AssemblyFileVersion uniquely identifies a build.
                 var entryAssembly = Assembly.GetEntryAssembly();
                 if (entryAssembly != null)
@@ -259,7 +312,28 @@ namespace Microsoft.AppCenter.Utils
                     return FileVersionInfo.GetVersionInfo(assemblyLocation);
                 }
                 return null;
+#endif
             }
         }
     }
+
+#if USE_WMI_LIGHT
+#nullable enable
+    internal static class WmiLightExtensions
+    {
+        public static object? TryGetValue(this WmiObject? o, string key)
+        {
+            try
+            {
+                var result = o?.GetPropertyValue(key);
+                return result;
+            }
+            catch
+            {
+                // WmiLight key 不存在时抛出 COM 异常 0x80041002
+                return null;
+            }
+        }
+    }
+#endif
 }

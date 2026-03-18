@@ -20,7 +20,12 @@ namespace Microsoft.AppCenter
         const string AppSecretKeyName = "appsecret";
         const string SecretsPattern = @"([^;=]+)=([^;]+)(?:;\s*)?";
 
-        static readonly Regex _secretsRegex = new Regex(SecretsPattern);
+        static readonly Regex _secretsRegex =
+#if NET7_0_OR_GREATER
+            SecretsRegex();
+#else
+            new Regex(SecretsPattern);
+#endif
 
         // Gets the first instance of an app sceret and/or target token corresponding to the given platform name, or returns the string 
         // as-is if no identifier can be found. Logs a message if no identifiers can be found.
@@ -202,6 +207,164 @@ namespace Microsoft.AppCenter
             PlatformConfigure(appSecret);
         }
 
+#if NET7_0_OR_GREATER
+        /// <summary>
+        ///     Start services.
+        ///     This may be called only once per service per application process lifetime.
+        /// </summary>
+        public static void Start<TService>()
+            where TService : IAppCenterService2
+        {
+            PlatformStart<TService>();
+        }
+
+        /// <summary>
+        ///     Start services.
+        ///     This may be called only once per service per application process lifetime.
+        /// </summary>
+        public static void Start<TService1, TService2>()
+            where TService1 : IAppCenterService2
+            where TService2 : IAppCenterService2
+        {
+            PlatformStart<TService1, TService2>();
+        }
+
+        /// <summary>
+        ///     Start services.
+        ///     This may be called only once per service per application process lifetime.
+        /// </summary>
+        public static void Start<TService1, TService2, TService3>()
+            where TService1 : IAppCenterService2
+            where TService2 : IAppCenterService2
+            where TService3 : IAppCenterService2
+        {
+            PlatformStart<TService1, TService2, TService3>();
+        }
+
+        /// <summary>
+        ///     Start services.
+        ///     This may be called only once per service per application process lifetime.
+        /// </summary>
+        public static void Start<TService1, TService2, TService3, TService4>()
+            where TService1 : IAppCenterService2
+            where TService2 : IAppCenterService2
+            where TService3 : IAppCenterService2
+            where TService4 : IAppCenterService2
+        {
+            PlatformStart<TService1, TService2, TService3, TService4>();
+        }
+
+        /// <summary>
+        ///     Start services.
+        ///     This may be called only once per service per application process lifetime.
+        /// </summary>
+        public static void Start<TService1, TService2, TService3, TService4, TService5>()
+            where TService1 : IAppCenterService2
+            where TService2 : IAppCenterService2
+            where TService3 : IAppCenterService2
+            where TService4 : IAppCenterService2
+            where TService5 : IAppCenterService2
+        {
+            PlatformStart<TService1, TService2, TService3, TService4, TService5>();
+        }
+
+        /// <summary>
+        ///     Start services.
+        ///     This may be called only once per service per application process lifetime.
+        /// </summary>
+        public static void Start<TService1, TService2, TService3, TService4, TService5, TService6>()
+            where TService1 : IAppCenterService2
+            where TService2 : IAppCenterService2
+            where TService3 : IAppCenterService2
+            where TService4 : IAppCenterService2
+            where TService5 : IAppCenterService2
+            where TService6 : IAppCenterService2
+        {
+            PlatformStart<TService1, TService2, TService3, TService4, TService5, TService6>();
+        }
+
+        /// <summary>
+        ///     Initialize the SDK with the list of services to start.
+        ///     This may be called only once per application process lifetime.
+        /// </summary>
+        /// <param name="appSecret">A unique and secret key used to identify the application.</param>
+        /// <typeparam name="TService"></typeparam>
+        public static void Start<TService>(string appSecret)
+            where TService : IAppCenterService2
+        {
+            PlatformStart<TService>(appSecret);
+        }
+
+        /// <summary>
+        ///     Initialize the SDK with the list of services to start.
+        ///     This may be called only once per application process lifetime.
+        /// </summary>
+        /// <param name="appSecret">A unique and secret key used to identify the application.</param>
+        public static void Start<TService1, TService2>(string appSecret)
+            where TService1 : IAppCenterService2
+            where TService2 : IAppCenterService2
+        {
+            PlatformStart<TService1, TService2>(appSecret);
+        }
+
+        /// <summary>
+        ///     Initialize the SDK with the list of services to start.
+        ///     This may be called only once per application process lifetime.
+        /// </summary>
+        /// <param name="appSecret">A unique and secret key used to identify the application.</param>
+        public static void Start<TService1, TService2, TService3>(string appSecret)
+            where TService1 : IAppCenterService2
+            where TService2 : IAppCenterService2
+            where TService3 : IAppCenterService2
+        {
+            PlatformStart<TService1, TService2, TService3>(appSecret);
+        }
+
+        /// <summary>
+        ///     Initialize the SDK with the list of services to start.
+        ///     This may be called only once per application process lifetime.
+        /// </summary>
+        /// <param name="appSecret">A unique and secret key used to identify the application.</param>
+        public static void Start<TService1, TService2, TService3, TService4>(string appSecret)
+            where TService1 : IAppCenterService2
+            where TService2 : IAppCenterService2
+            where TService3 : IAppCenterService2
+            where TService4 : IAppCenterService2
+        {
+            PlatformStart<TService1, TService2, TService3, TService4>(appSecret);
+        }
+
+        /// <summary>
+        ///     Initialize the SDK with the list of services to start.
+        ///     This may be called only once per application process lifetime.
+        /// </summary>
+        /// <param name="appSecret">A unique and secret key used to identify the application.</param>
+        public static void Start<TService1, TService2, TService3, TService4, TService5>(string appSecret)
+            where TService1 : IAppCenterService2
+            where TService2 : IAppCenterService2
+            where TService3 : IAppCenterService2
+            where TService4 : IAppCenterService2
+            where TService5 : IAppCenterService2
+        {
+            PlatformStart<TService1, TService2, TService3, TService4, TService5>(appSecret);
+        }
+
+        /// <summary>
+        ///     Initialize the SDK with the list of services to start.
+        ///     This may be called only once per application process lifetime.
+        /// </summary>
+        /// <param name="appSecret">A unique and secret key used to identify the application.</param>
+        public static void Start<TService1, TService2, TService3, TService4, TService5, TService6>(string appSecret)
+            where TService1 : IAppCenterService2
+            where TService2 : IAppCenterService2
+            where TService3 : IAppCenterService2
+            where TService4 : IAppCenterService2
+            where TService5 : IAppCenterService2
+            where TService6 : IAppCenterService2
+        {
+            PlatformStart<TService1, TService2, TService3, TService4, TService5, TService6>(appSecret);
+        }
+#else
         /// <summary>
         ///     Start services.
         ///     This may be called only once per service per application process lifetime.
@@ -222,6 +385,7 @@ namespace Microsoft.AppCenter
         {
             PlatformStart(appSecret, services);
         }
+#endif
 
         /// <summary>
         /// Set the maximum size of the internal storage.
@@ -245,5 +409,10 @@ namespace Microsoft.AppCenter
         {
             PlatformUnsetInstance();
         }
+
+#if NET7_0_OR_GREATER
+        [GeneratedRegex(SecretsPattern)]
+        private static partial Regex SecretsRegex();
+#endif
     }
 }

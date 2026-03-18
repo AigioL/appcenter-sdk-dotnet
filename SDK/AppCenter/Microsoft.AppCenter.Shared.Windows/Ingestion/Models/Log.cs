@@ -4,12 +4,22 @@
 namespace Microsoft.AppCenter.Ingestion.Models
 {
     using Newtonsoft.Json;
+#if USE_SYS_JSON
+    using System.Text.Json.Serialization;
+#endif
 
+#if USE_SYS_JSON
+    [JsonPolymorphic(TypeDiscriminatorPropertyName = global::Microsoft.AppCenter.Ingestion.Models.Serialization.LogJsonConverter.TypeIdKey)]
+    [JsonDerivedType(typeof(StartServiceLog), typeDiscriminator: StartServiceLog.JsonIdentifier)]
+#endif
     public partial class Log
     {
         /// <summary>
         /// Initializes a new instance of the Log class.
         /// </summary>
+#if USE_SYS_JSON
+        [JsonConstructor]
+#endif
         public Log()
         {
             CustomInit();
@@ -53,7 +63,7 @@ namespace Microsoft.AppCenter.Ingestion.Models
         /// Gets or sets log timestamp, example: '2017-03-13T18:05:42Z'.
         ///
         /// </summary>
-        [JsonProperty(PropertyName = "timestamp")]
+        [JsonProperty("timestamp")]
         public System.DateTime? Timestamp { get; set; }
 
         /// <summary>
@@ -66,26 +76,26 @@ namespace Microsoft.AppCenter.Ingestion.Models
         /// session and always include this identifier.
         ///
         /// </summary>
-        [JsonProperty(PropertyName = "sid")]
+        [JsonProperty("sid")]
         public System.Guid? Sid { get; set; }
 
         /// <summary>
         /// Gets or sets optional string used for associating logs with users.
         ///
         /// </summary>
-        [JsonProperty(PropertyName = "userId")]
+        [JsonProperty("userId")]
         public string UserId { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "device")]
+        [JsonProperty("device")]
         public Device Device { get; set; }
 
         /// <summary>
         /// Gets or sets optional string used for specify data residency region.
         ///
         /// </summary>
-        [JsonProperty(PropertyName = "dataResidencyRegion")]
+        [JsonProperty("dataResidencyRegion")]
         public string DataResidencyRegion { get; set; }
 
         /// <summary>

@@ -13,6 +13,9 @@ namespace Microsoft.AppCenter.Crashes.Ingestion.Models
         /// <summary>
         /// Initializes a new instance of the StackFrame class.
         /// </summary>
+#if USE_SYS_JSON
+        [System.Text.Json.Serialization.JsonConstructor]
+#endif
         public StackFrame()
         {
             CustomInit();
@@ -52,41 +55,41 @@ namespace Microsoft.AppCenter.Crashes.Ingestion.Models
         /// <summary>
         /// Gets or sets frame address.
         /// </summary>
-        [JsonProperty(PropertyName = "address")]
+        [JsonProperty("address")]
         public string Address { get; set; }
 
         /// <summary>
         /// Gets or sets symbolized code line
         /// </summary>
-        [JsonProperty(PropertyName = "code")]
+        [JsonProperty("code")]
         public string Code { get; set; }
 
         /// <summary>
         /// Gets or sets the fully qualified name of the Class containing the
         /// execution point represented by this stack trace element.
         /// </summary>
-        [JsonProperty(PropertyName = "className")]
+        [JsonProperty("className")]
         public string ClassName { get; set; }
 
         /// <summary>
         /// Gets or sets the name of the method containing the execution point
         /// represented by this stack trace element.
         /// </summary>
-        [JsonProperty(PropertyName = "methodName")]
+        [JsonProperty("methodName")]
         public string MethodName { get; set; }
 
         /// <summary>
         /// Gets or sets the line number of the source line containing the
         /// execution point represented by this stack trace element.
         /// </summary>
-        [JsonProperty(PropertyName = "lineNumber")]
+        [JsonProperty("lineNumber")]
         public int? LineNumber { get; set; }
 
         /// <summary>
         /// Gets or sets the name of the file containing the execution point
         /// represented by this stack trace element.
         /// </summary>
-        [JsonProperty(PropertyName = "fileName")]
+        [JsonProperty("fileName")]
         public string FileName { get; set; }
     }
 }

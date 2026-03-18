@@ -20,7 +20,11 @@ namespace Microsoft.AppCenter.Channel
 
         private readonly IStorage _storage;
 
-        private readonly object _channelGroupLock = new object();
+#if NET9_0_OR_GREATER
+        private static readonly global::System.Threading.Lock _channelGroupLock = new();
+#else
+        private static readonly object _channelGroupLock = new object();
+#endif
 
         private bool _isDisposed;
 

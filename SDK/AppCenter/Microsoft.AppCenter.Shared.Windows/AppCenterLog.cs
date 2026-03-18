@@ -18,7 +18,11 @@ namespace Microsoft.AppCenter
         [EditorBrowsable(EditorBrowsableState.Never)]
         public const string LogTag = nameof(AppCenter);
 
+#if NET9_0_OR_GREATER
+        private static readonly global::System.Threading.Lock LogLock = new();
+#else
         private static readonly object LogLock = new object();
+#endif
         private static volatile LogLevel _level = LogLevel.Assert;
 
         /// <summary>

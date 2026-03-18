@@ -124,7 +124,7 @@ namespace Microsoft.AppCenter.Ingestion.Models
         /// the platform, e.g. "mobilecenter.ios", "hockeysdk.android".
         ///
         /// </summary>
-        [JsonProperty(PropertyName = "sdkName")]
+        [JsonProperty("sdkName")]
         public string SdkName { get; set; }
 
         /// <summary>
@@ -132,7 +132,7 @@ namespace Microsoft.AppCenter.Ingestion.Models
         /// "0.12.3-alpha.1".
         ///
         /// </summary>
-        [JsonProperty(PropertyName = "sdkVersion")]
+        [JsonProperty("sdkVersion")]
         public string SdkVersion { get; set; }
 
         /// <summary>
@@ -142,7 +142,7 @@ namespace Microsoft.AppCenter.Ingestion.Models
         /// field while sdkVersion refers to the original Android SDK.
         ///
         /// </summary>
-        [JsonProperty(PropertyName = "wrapperSdkVersion")]
+        [JsonProperty("wrapperSdkVersion")]
         public string WrapperSdkVersion { get; set; }
 
         /// <summary>
@@ -151,21 +151,21 @@ namespace Microsoft.AppCenter.Ingestion.Models
         /// "hockeysdk.cordova".
         ///
         /// </summary>
-        [JsonProperty(PropertyName = "wrapperSdkName")]
+        [JsonProperty("wrapperSdkName")]
         public string WrapperSdkName { get; set; }
 
         /// <summary>
         /// Gets or sets device model (example: iPad2,3).
         ///
         /// </summary>
-        [JsonProperty(PropertyName = "model")]
+        [JsonProperty("model")]
         public string Model { get; set; }
 
         /// <summary>
         /// Gets or sets device manufacturer (example: HTC).
         ///
         /// </summary>
-        [JsonProperty(PropertyName = "oemName")]
+        [JsonProperty("oemName")]
         public string OemName { get; set; }
 
         /// <summary>
@@ -173,21 +173,21 @@ namespace Microsoft.AppCenter.Ingestion.Models
         /// standardized (non-exclusive): Android, iOS, macOS, tvOS, Windows.
         ///
         /// </summary>
-        [JsonProperty(PropertyName = "osName")]
+        [JsonProperty("osName")]
         public string OsName { get; set; }
 
         /// <summary>
         /// Gets or sets OS version (example: 9.3.0).
         ///
         /// </summary>
-        [JsonProperty(PropertyName = "osVersion")]
+        [JsonProperty("osVersion")]
         public string OsVersion { get; set; }
 
         /// <summary>
         /// Gets or sets OS build code (example: LMY47X).
         ///
         /// </summary>
-        [JsonProperty(PropertyName = "osBuild")]
+        [JsonProperty("osBuild")]
         public string OsBuild { get; set; }
 
         /// <summary>
@@ -195,14 +195,14 @@ namespace Microsoft.AppCenter.Ingestion.Models
         /// 15).
         ///
         /// </summary>
-        [JsonProperty(PropertyName = "osApiLevel")]
+        [JsonProperty("osApiLevel")]
         public int? OsApiLevel { get; set; }
 
         /// <summary>
         /// Gets or sets language code (example: en-US).
         ///
         /// </summary>
-        [JsonProperty(PropertyName = "locale")]
+        [JsonProperty("locale")]
         public string Locale { get; set; }
 
         /// <summary>
@@ -210,7 +210,7 @@ namespace Microsoft.AppCenter.Ingestion.Models
         /// zone, including daylight savings time.
         ///
         /// </summary>
-        [JsonProperty(PropertyName = "timeZoneOffset")]
+        [JsonProperty("timeZoneOffset")]
         public int TimeZoneOffset { get; set; }
 
         /// <summary>
@@ -218,35 +218,35 @@ namespace Microsoft.AppCenter.Ingestion.Models
         /// 640x480).
         ///
         /// </summary>
-        [JsonProperty(PropertyName = "screenSize")]
+        [JsonProperty("screenSize")]
         public string ScreenSize { get; set; }
 
         /// <summary>
         /// Gets or sets application version name, e.g. 1.1.0
         ///
         /// </summary>
-        [JsonProperty(PropertyName = "appVersion")]
+        [JsonProperty("appVersion")]
         public string AppVersion { get; set; }
 
         /// <summary>
         /// Gets or sets carrier name (for mobile devices).
         ///
         /// </summary>
-        [JsonProperty(PropertyName = "carrierName")]
+        [JsonProperty("carrierName")]
         public string CarrierName { get; set; }
 
         /// <summary>
         /// Gets or sets carrier country code (for mobile devices).
         ///
         /// </summary>
-        [JsonProperty(PropertyName = "carrierCountry")]
+        [JsonProperty("carrierCountry")]
         public string CarrierCountry { get; set; }
 
         /// <summary>
         /// Gets or sets the app's build number, e.g. 42.
         ///
         /// </summary>
-        [JsonProperty(PropertyName = "appBuild")]
+        [JsonProperty("appBuild")]
         public string AppBuild { get; set; }
 
         /// <summary>
@@ -255,7 +255,7 @@ namespace Microsoft.AppCenter.Ingestion.Models
         /// com.microsoft.example.
         ///
         /// </summary>
-        [JsonProperty(PropertyName = "appNamespace")]
+        [JsonProperty("appNamespace")]
         public string AppNamespace { get; set; }
 
         /// <summary>
@@ -263,7 +263,7 @@ namespace Microsoft.AppCenter.Ingestion.Models
         /// 'version' released via Live Update beacon running on device
         ///
         /// </summary>
-        [JsonProperty(PropertyName = "liveUpdateReleaseLabel")]
+        [JsonProperty("liveUpdateReleaseLabel")]
         public string LiveUpdateReleaseLabel { get; set; }
 
         /// <summary>
@@ -272,7 +272,7 @@ namespace Microsoft.AppCenter.Ingestion.Models
         /// Production, Staging.
         ///
         /// </summary>
-        [JsonProperty(PropertyName = "liveUpdateDeploymentKey")]
+        [JsonProperty("liveUpdateDeploymentKey")]
         public string LiveUpdateDeploymentKey { get; set; }
 
         /// <summary>
@@ -281,7 +281,7 @@ namespace Microsoft.AppCenter.Ingestion.Models
         /// device or need to download updates in future.
         ///
         /// </summary>
-        [JsonProperty(PropertyName = "liveUpdatePackageHash")]
+        [JsonProperty("liveUpdatePackageHash")]
         public string LiveUpdatePackageHash { get; set; }
 
         /// <summary>
@@ -291,7 +291,7 @@ namespace Microsoft.AppCenter.Ingestion.Models
         /// ReactNative or other.
         ///
         /// </summary>
-        [JsonProperty(PropertyName = "wrapperRuntimeVersion")]
+        [JsonProperty("wrapperRuntimeVersion")]
         public string WrapperRuntimeVersion { get; set; }
 
         /// <summary>

@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace Microsoft.AppCenter.Analytics
 {
-    public class Analytics : AppCenterService
+    public partial class Analytics : AppCenterService
     {
         #region static
 
@@ -24,7 +24,11 @@ namespace Microsoft.AppCenter.Analytics
 
         private const int MaxEventNameLength = 256;
 
+#if NET9_0_OR_GREATER
+        private static readonly global::System.Threading.Lock AnalyticsLock = new();
+#else
         private static readonly object AnalyticsLock = new object();
+#endif
 
         private static volatile Analytics _instanceField;
 
@@ -129,7 +133,8 @@ namespace Microsoft.AppCenter.Analytics
         {
             lock (AnalyticsLock)
             {
-                if (Instance._sessionTracker == null) {
+                if (Instance._sessionTracker == null)
+                {
                     AppCenterLog.Error(LogTag, "Start session should be called after the Analytics start.");
                     return;
                 }
@@ -146,6 +151,9 @@ namespace Microsoft.AppCenter.Analytics
             LogSerializer.AddLogType(PageLog.JsonIdentifier, typeof(PageLog));
             LogSerializer.AddLogType(EventLog.JsonIdentifier, typeof(EventLog));
             LogSerializer.AddLogType(StartSessionLog.JsonIdentifier, typeof(StartSessionLog));
+#if USE_SYS_JSON
+            LogSerializer.AddLogType(AnalyticsJsonSerializerContext.Default);
+#endif
         }
 
         internal Analytics(ISessionTrackerFactory sessionTrackerFactory) : this()
@@ -279,4 +287,11 @@ namespace Microsoft.AppCenter.Analytics
 
         #endregion
     }
+
+#if NET7_0_OR_GREATER
+    public partial class Analytics : IAppCenterService2
+    {
+        static IAppCenterService IAppCenterService2.Instance => Instance;
+    }
+#endif
 }

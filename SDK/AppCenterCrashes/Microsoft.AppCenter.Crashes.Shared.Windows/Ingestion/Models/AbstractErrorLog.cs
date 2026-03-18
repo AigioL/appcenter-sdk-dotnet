@@ -14,6 +14,9 @@ namespace Microsoft.AppCenter.Crashes.Ingestion.Models
         /// <summary>
         /// Initializes a new instance of the AbstractErrorLog class.
         /// </summary>
+#if USE_SYS_JSON
+        [System.Text.Json.Serialization.JsonConstructor]
+#endif
         public AbstractErrorLog()
         {
         }
@@ -69,43 +72,43 @@ namespace Microsoft.AppCenter.Crashes.Ingestion.Models
         /// <summary>
         /// Gets or sets error identifier.
         /// </summary>
-        [JsonProperty(PropertyName = "id")]
+        [JsonProperty("id")]
         public System.Guid Id { get; set; }
 
         /// <summary>
         /// Gets or sets process identifier.
         /// </summary>
-        [JsonProperty(PropertyName = "processId")]
+        [JsonProperty("processId")]
         public int ProcessId { get; set; }
 
         /// <summary>
         /// Gets or sets process name.
         /// </summary>
-        [JsonProperty(PropertyName = "processName")]
+        [JsonProperty("processName")]
         public string ProcessName { get; set; }
 
         /// <summary>
         /// Gets or sets parent's process identifier.
         /// </summary>
-        [JsonProperty(PropertyName = "parentProcessId")]
+        [JsonProperty("parentProcessId")]
         public int? ParentProcessId { get; set; }
 
         /// <summary>
         /// Gets or sets parent's process name.
         /// </summary>
-        [JsonProperty(PropertyName = "parentProcessName")]
+        [JsonProperty("parentProcessName")]
         public string ParentProcessName { get; set; }
 
         /// <summary>
         /// Gets or sets error thread identifier.
         /// </summary>
-        [JsonProperty(PropertyName = "errorThreadId")]
+        [JsonProperty("errorThreadId")]
         public long? ErrorThreadId { get; set; }
 
         /// <summary>
         /// Gets or sets error thread name.
         /// </summary>
-        [JsonProperty(PropertyName = "errorThreadName")]
+        [JsonProperty("errorThreadName")]
         public string ErrorThreadName { get; set; }
 
         /// <summary>
@@ -113,7 +116,7 @@ namespace Microsoft.AppCenter.Crashes.Ingestion.Models
         /// Corresponds to the number of milliseconds elapsed between the time
         /// the error occurred and the app was launched.
         /// </summary>
-        [JsonProperty(PropertyName = "fatal")]
+        [JsonProperty("fatal")]
         public bool Fatal { get; set; }
 
         /// <summary>
@@ -121,13 +124,13 @@ namespace Microsoft.AppCenter.Crashes.Ingestion.Models
         /// '2017-03-13T18:05:42Z'.
         ///
         /// </summary>
-        [JsonProperty(PropertyName = "appLaunchTimestamp")]
+        [JsonProperty("appLaunchTimestamp")]
         public System.DateTime? AppLaunchTimestamp { get; set; }
 
         /// <summary>
         /// Gets or sets CPU architecture.
         /// </summary>
-        [JsonProperty(PropertyName = "architecture")]
+        [JsonProperty("architecture")]
         public string Architecture { get; set; }
 
         /// <summary>

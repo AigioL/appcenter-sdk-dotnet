@@ -1,23 +1,45 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project>
-  <PropertyGroup>
-    <Copyright>Microsoft Corp. All rights reserved.</Copyright>
-    <Company>Microsoft Corporation</Company>
-    <!-- Current version. -->
-    <Version>5.0.7-SNAPSHOT</Version>
-    <FileVersion>5.0.7.0</FileVersion>
-    <!-- Used in runtime to ensure versions match. Prevents loading in some cases, so don't set it as release version. -->
-    <AssemblyVersion>0.0.0.0</AssemblyVersion>
-    <!-- Fix to have multiple projects in the same folder. -->
-    <BaseIntermediateOutputPath>obj\$(MSBuildProjectName)</BaseIntermediateOutputPath>
-    <DefaultItemExcludes>$(DefaultItemExcludes);obj\**</DefaultItemExcludes>
-    <!-- Build XML documentation. -->
-    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
-    <!-- TODO: Fix XML documentation warnings. -->
-    <NoWarn>1573;1591</NoWarn>
-    <!-- Signing. -->
-    <SignAssembly>true</SignAssembly>
-    <DelaySign>true</DelaySign>
-    <AssemblyOriginatorKeyFile>..\..\..\appcenter-public-key.snk</AssemblyOriginatorKeyFile>
-  </PropertyGroup>
+	<PropertyGroup>
+		<Copyright>Microsoft Corp. All rights reserved.</Copyright>
+		<Company>Microsoft Corporation</Company>
+		<!-- Current version. -->
+		<Version>5.0.7</Version>
+		<FileVersion>5.0.7.0</FileVersion>
+		<!-- Used in runtime to ensure versions match. Prevents loading in some cases, so don't set it as release version. -->
+		<AssemblyVersion>0.0.0.0</AssemblyVersion>
+		<!-- Fix to have multiple projects in the same folder. -->
+		<BaseIntermediateOutputPath>obj\$(MSBuildProjectName)</BaseIntermediateOutputPath>
+		<DefaultItemExcludes>$(DefaultItemExcludes);obj\**</DefaultItemExcludes>
+		<!-- Build XML documentation. -->
+		<DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+		<!-- TODO: Fix XML documentation warnings. -->
+		<NoWarn>1573;1591</NoWarn>
+		<!-- Signing. -->
+		<SignAssembly>true</SignAssembly>
+		<DelaySign>true</DelaySign>
+		<AssemblyOriginatorKeyFile>..\..\..\appcenter-public-key.snk</AssemblyOriginatorKeyFile>
+	</PropertyGroup>
+
+	<!-- 👇 全局 Property 配置 -->
+	<PropertyGroup>
+		<Deterministic>true</Deterministic>
+		<LangVersion>latest</LangVersion>
+	</PropertyGroup>
+
+	<!-- 👇 阻止 error NETSDK1175: 启用剪裁时，不支持或不推荐使用 Windows 窗体 -->
+	<PropertyGroup>
+		<_SuppressWinFormsTrimError>true</_SuppressWinFormsTrimError>
+		<_SuppressWpfTrimError>true</_SuppressWpfTrimError>
+	</PropertyGroup>
+
+	<!-- 👇 静态本机编译 & 剪裁 | AOT & Trimmable -->
+	<PropertyGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net7.0'))">
+		<PublishAot>true</PublishAot>
+		<IsTrimmable>true</IsTrimmable>
+		<EnableTrimAnalyzer>true</EnableTrimAnalyzer>
+		<EnableSingleFileAnalyzer>true</EnableSingleFileAnalyzer>
+		<EnableAotAnalyzer>true</EnableAotAnalyzer>
+		<IsAotCompatible>true</IsAotCompatible>
+	</PropertyGroup>
 </Project>

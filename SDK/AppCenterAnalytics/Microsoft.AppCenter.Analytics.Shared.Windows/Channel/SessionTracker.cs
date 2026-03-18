@@ -42,7 +42,11 @@ namespace Microsoft.AppCenter.Analytics.Channel
         private long _lastQueuedLogTime;
         private long _lastResumedTime;
         private long _lastPausedTime;
-        private readonly object _lockObject = new object();
+#if NET9_0_OR_GREATER
+        private static readonly global::System.Threading.Lock _lockObject = new();
+#else
+        private static readonly object _lockObject = new object();
+#endif
 
         public SessionTracker(IChannel channelGroup, IChannelUnit channel)
         {

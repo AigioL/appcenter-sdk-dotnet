@@ -10,7 +10,9 @@ namespace Microsoft.AppCenter.Analytics.Ingestion.Models
     /// <summary>
     /// Event log.
     /// </summary>
+#if !USE_SYS_JSON
     [Newtonsoft.Json.JsonObject(JsonIdentifier)]
+#endif
     public partial class EventLog : LogWithProperties
     {
         internal const string JsonIdentifier = "event";
@@ -18,6 +20,9 @@ namespace Microsoft.AppCenter.Analytics.Ingestion.Models
         /// <summary>
         /// Initializes a new instance of the EventLog class.
         /// </summary>
+#if USE_SYS_JSON
+        [System.Text.Json.Serialization.JsonConstructor]
+#endif
         public EventLog()
         {
             CustomInit();
@@ -64,14 +69,14 @@ namespace Microsoft.AppCenter.Analytics.Ingestion.Models
         /// Gets or sets unique identifier for this event.
         ///
         /// </summary>
-        [JsonProperty(PropertyName = "id")]
+        [JsonProperty("id")]
         public System.Guid Id { get; set; }
 
         /// <summary>
         /// Gets or sets name of the event.
         ///
         /// </summary>
-        [JsonProperty(PropertyName = "name")]
+        [JsonProperty("name")]
         public string Name { get; set; }
 
         /// <summary>

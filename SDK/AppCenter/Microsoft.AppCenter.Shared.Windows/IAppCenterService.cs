@@ -28,4 +28,11 @@ namespace Microsoft.AppCenter
 
         void OnChannelGroupReady(IChannelGroup channelGroup, string appSecret);
     }
+
+#if NET7_0_OR_GREATER
+    public interface IAppCenterService2 : IAppCenterService
+    {
+        static abstract IAppCenterService Instance { get; }
+    }
+#endif
 }

@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.AppCenter.Channel;
@@ -33,7 +34,11 @@ namespace Microsoft.AppCenter
         private const long DefaultStorageMaxSize = 1024 * 1024 * 10;
 
         // The lock is static. Instance methods are not necessarily thread safe, but static methods are
+#if NET9_0_OR_GREATER
+        private static readonly global::System.Threading.Lock AppCenterLock = new();
+#else
         private static readonly object AppCenterLock = new object();
+#endif
 
         private static IApplicationSettingsFactory _applicationSettingsFactory;
         private static IChannelGroupFactory _channelGroupFactory;
@@ -100,7 +105,7 @@ namespace Microsoft.AppCenter
                     return Instance._applicationSettings.GetValue<bool>(AllowedNetworkRequestsKey, true);
                 }
             }
-            set 
+            set
             {
                 lock (AppCenterLock)
                 {
@@ -116,7 +121,7 @@ namespace Microsoft.AppCenter
                     }
                     AppCenterLog.Info(AppCenterLog.LogTag, $"Set network requests {(value ? "allowed" : "forbidden")}");
                 }
-            } 
+            }
         }
 
         /// <summary>
@@ -137,7 +142,7 @@ namespace Microsoft.AppCenter
         /// Sets the data residency region to send to the backend.
         /// </summary>
         /// <param name="dataResidencyRegion">The data residency region code.
-        /// Verify list of supported regions on <link>. Value outside of supported range is treated as ANY</param>
+        /// Verify list of supported regions on &lt;link&gt;. Value outside of supported range is treated as ANY</param>
         public static void PlatformSetDataResidencyRegion(string dataResidencyRegion)
         {
             lock (AppCenterLock)
@@ -158,7 +163,7 @@ namespace Microsoft.AppCenter
         // This method must be called *before* instance of AppCenter has been created
         // for a custom application settings to be used.
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [Obsolete]
+        //[Obsolete]
         public static void SetApplicationSettingsFactory(IApplicationSettingsFactory factory)
         {
             lock (AppCenterLock)
@@ -259,6 +264,277 @@ namespace Microsoft.AppCenter
             }
         }
 
+#if NET7_0_OR_GREATER
+        static void PlatformStart<TService>()
+            where TService : IAppCenterService2
+        {
+            lock (AppCenterLock)
+            {
+                try
+                {
+                    Instance.StartInstance<TService>();
+                }
+                catch (AppCenterException ex)
+                {
+                    AppCenterLog.Error(AppCenterLog.LogTag, StartErrorMessage, ex);
+                }
+            }
+        }
+
+        static void PlatformStart<TService1, TService2>()
+            where TService1 : IAppCenterService2
+            where TService2 : IAppCenterService2
+        {
+            lock (AppCenterLock)
+            {
+                try
+                {
+                    Instance.StartInstance<TService1, TService2>();
+                }
+                catch (AppCenterException ex)
+                {
+                    AppCenterLog.Error(AppCenterLog.LogTag, StartErrorMessage, ex);
+                }
+            }
+        }
+
+        static void PlatformStart<TService1, TService2, TService3>()
+            where TService1 : IAppCenterService2
+            where TService2 : IAppCenterService2
+            where TService3 : IAppCenterService2
+        {
+            lock (AppCenterLock)
+            {
+                try
+                {
+                    Instance.StartInstance<TService1, TService2, TService3>();
+                }
+                catch (AppCenterException ex)
+                {
+                    AppCenterLog.Error(AppCenterLog.LogTag, StartErrorMessage, ex);
+                }
+            }
+        }
+
+        static void PlatformStart<TService1, TService2, TService3, TService4>()
+            where TService1 : IAppCenterService2
+            where TService2 : IAppCenterService2
+            where TService3 : IAppCenterService2
+            where TService4 : IAppCenterService2
+        {
+            lock (AppCenterLock)
+            {
+                try
+                {
+                    Instance.StartInstance<TService1, TService2, TService3, TService4>();
+                }
+                catch (AppCenterException ex)
+                {
+                    AppCenterLog.Error(AppCenterLog.LogTag, StartErrorMessage, ex);
+                }
+            }
+        }
+
+        static void PlatformStart<TService1, TService2, TService3, TService4, TService5>()
+            where TService1 : IAppCenterService2
+            where TService2 : IAppCenterService2
+            where TService3 : IAppCenterService2
+            where TService4 : IAppCenterService2
+            where TService5 : IAppCenterService2
+        {
+            lock (AppCenterLock)
+            {
+                try
+                {
+                    Instance.StartInstance<TService1, TService2, TService3, TService4, TService5>();
+                }
+                catch (AppCenterException ex)
+                {
+                    AppCenterLog.Error(AppCenterLog.LogTag, StartErrorMessage, ex);
+                }
+            }
+        }
+
+        static void PlatformStart<TService1, TService2, TService3, TService4, TService5, TService6>()
+            where TService1 : IAppCenterService2
+            where TService2 : IAppCenterService2
+            where TService3 : IAppCenterService2
+            where TService4 : IAppCenterService2
+            where TService5 : IAppCenterService2
+            where TService6 : IAppCenterService2
+        {
+            lock (AppCenterLock)
+            {
+                try
+                {
+                    Instance.StartInstance<TService1, TService2, TService3, TService4, TService5, TService6>();
+                }
+                catch (AppCenterException ex)
+                {
+                    AppCenterLog.Error(AppCenterLog.LogTag, StartErrorMessage, ex);
+                }
+            }
+        }
+
+        static void PlatformStart<TService>(string appSecret)
+            where TService : IAppCenterService2
+        {
+            lock (AppCenterLock)
+            {
+                try
+                {
+                    Instance.InstanceConfigure(appSecret);
+                }
+                catch (AppCenterException ex)
+                {
+                    AppCenterLog.Error(AppCenterLog.LogTag, ConfigurationErrorMessage, ex);
+                }
+                try
+                {
+                    Instance.StartInstance<TService>();
+                }
+                catch (AppCenterException ex)
+                {
+                    AppCenterLog.Error(AppCenterLog.LogTag, StartErrorMessage, ex);
+                }
+            }
+        }
+
+        static void PlatformStart<TService1, TService2>(string appSecret)
+            where TService1 : IAppCenterService2
+            where TService2 : IAppCenterService2
+        {
+            lock (AppCenterLock)
+            {
+                try
+                {
+                    Instance.InstanceConfigure(appSecret);
+                }
+                catch (AppCenterException ex)
+                {
+                    AppCenterLog.Error(AppCenterLog.LogTag, ConfigurationErrorMessage, ex);
+                }
+                try
+                {
+                    Instance.StartInstance<TService1, TService2>();
+                }
+                catch (AppCenterException ex)
+                {
+                    AppCenterLog.Error(AppCenterLog.LogTag, StartErrorMessage, ex);
+                }
+            }
+        }
+
+        static void PlatformStart<TService1, TService2, TService3>(string appSecret)
+            where TService1 : IAppCenterService2
+            where TService2 : IAppCenterService2
+            where TService3 : IAppCenterService2
+        {
+            lock (AppCenterLock)
+            {
+                try
+                {
+                    Instance.InstanceConfigure(appSecret);
+                }
+                catch (AppCenterException ex)
+                {
+                    AppCenterLog.Error(AppCenterLog.LogTag, ConfigurationErrorMessage, ex);
+                }
+                try
+                {
+                    Instance.StartInstance<TService1, TService2, TService3>();
+                }
+                catch (AppCenterException ex)
+                {
+                    AppCenterLog.Error(AppCenterLog.LogTag, StartErrorMessage, ex);
+                }
+            }
+        }
+
+        static void PlatformStart<TService1, TService2, TService3, TService4>(string appSecret)
+            where TService1 : IAppCenterService2
+            where TService2 : IAppCenterService2
+            where TService3 : IAppCenterService2
+            where TService4 : IAppCenterService2
+        {
+            lock (AppCenterLock)
+            {
+                try
+                {
+                    Instance.InstanceConfigure(appSecret);
+                }
+                catch (AppCenterException ex)
+                {
+                    AppCenterLog.Error(AppCenterLog.LogTag, ConfigurationErrorMessage, ex);
+                }
+                try
+                {
+                    Instance.StartInstance<TService1, TService2, TService3, TService4>();
+                }
+                catch (AppCenterException ex)
+                {
+                    AppCenterLog.Error(AppCenterLog.LogTag, StartErrorMessage, ex);
+                }
+            }
+        }
+
+        static void PlatformStart<TService1, TService2, TService3, TService4, TService5>(string appSecret)
+            where TService1 : IAppCenterService2
+            where TService2 : IAppCenterService2
+            where TService3 : IAppCenterService2
+            where TService4 : IAppCenterService2
+            where TService5 : IAppCenterService2
+        {
+            lock (AppCenterLock)
+            {
+                try
+                {
+                    Instance.InstanceConfigure(appSecret);
+                }
+                catch (AppCenterException ex)
+                {
+                    AppCenterLog.Error(AppCenterLog.LogTag, ConfigurationErrorMessage, ex);
+                }
+                try
+                {
+                    Instance.StartInstance<TService1, TService2, TService3, TService4, TService5>();
+                }
+                catch (AppCenterException ex)
+                {
+                    AppCenterLog.Error(AppCenterLog.LogTag, StartErrorMessage, ex);
+                }
+            }
+        }
+
+        static void PlatformStart<TService1, TService2, TService3, TService4, TService5, TService6>(string appSecret)
+            where TService1 : IAppCenterService2
+            where TService2 : IAppCenterService2
+            where TService3 : IAppCenterService2
+            where TService4 : IAppCenterService2
+            where TService5 : IAppCenterService2
+            where TService6 : IAppCenterService2
+        {
+            lock (AppCenterLock)
+            {
+                try
+                {
+                    Instance.InstanceConfigure(appSecret);
+                }
+                catch (AppCenterException ex)
+                {
+                    AppCenterLog.Error(AppCenterLog.LogTag, ConfigurationErrorMessage, ex);
+                }
+                try
+                {
+                    Instance.StartInstance<TService1, TService2, TService3, TService4, TService5, TService6>();
+                }
+                catch (AppCenterException ex)
+                {
+                    AppCenterLog.Error(AppCenterLog.LogTag, StartErrorMessage, ex);
+                }
+            }
+        }
+#else
         static void PlatformStart(params Type[] services)
         {
             lock (AppCenterLock)
@@ -296,6 +572,7 @@ namespace Microsoft.AppCenter
                 }
             }
         }
+#endif
 
         static Task<bool> PlatformSetMaxStorageSizeAsync(long sizeInBytes)
         {
@@ -437,6 +714,212 @@ namespace Microsoft.AppCenter
             AppCenterLog.Info(AppCenterLog.LogTag, "App Center SDK configured successfully.");
         }
 
+#if NET7_0_OR_GREATER
+        private void StartInstanceCore<TService>(List<string> serviceNames)
+            where TService : IAppCenterService2
+        {
+            try
+            {
+                var serviceInstance = TService.Instance;
+                if (serviceInstance == null)
+                {
+                    throw new AppCenterException("Service type does not contain static 'Instance' property of type IAppCenterService. The service is either not an App Center service or it's unsupported on this platform or the SDK is used from a .NET standard library and the nuget was not also added to the UWP/WPF/WinForms project.");
+                }
+                StartService(serviceInstance);
+                serviceNames.Add(serviceInstance.ServiceName);
+            }
+            catch (AppCenterException e)
+            {
+                AppCenterLog.Error(AppCenterLog.LogTag, $"Failed to start service '{typeof(TService).Name}'; skipping it.", e);
+            }
+        }
+
+        internal void StartInstance<TService>()
+            where TService : IAppCenterService2
+        {
+            if (!_instanceConfigured)
+            {
+                throw new AppCenterException("App Center has not been configured.");
+            }
+
+            var serviceNames = new List<string>();
+            StartInstanceCore<TService>(serviceNames);
+
+            // Enqueue a log indicating which services have been initialized
+            if (serviceNames.Count > 0)
+            {
+                if (InstanceEnabled)
+                {
+                    _channel.EnqueueAsync(new StartServiceLog { Services = serviceNames, DataResidencyRegion = PlatformGetDataResidencyRegion() }).ConfigureAwait(false);
+                }
+                else
+                {
+                    _startedServiceNames ??= [];
+                    _startedServiceNames.AddRange(serviceNames);
+                }
+            }
+        }
+
+        internal void StartInstance<TService1, TService2>()
+            where TService1 : IAppCenterService2
+            where TService2 : IAppCenterService2
+        {
+            if (!_instanceConfigured)
+            {
+                throw new AppCenterException("App Center has not been configured.");
+            }
+
+            var serviceNames = new List<string>();
+            StartInstanceCore<TService1>(serviceNames);
+            StartInstanceCore<TService2>(serviceNames);
+
+            // Enqueue a log indicating which services have been initialized
+            if (serviceNames.Count > 0)
+            {
+                if (InstanceEnabled)
+                {
+                    _channel.EnqueueAsync(new StartServiceLog { Services = serviceNames, DataResidencyRegion = PlatformGetDataResidencyRegion() }).ConfigureAwait(false);
+                }
+                else
+                {
+                    _startedServiceNames ??= [];
+                    _startedServiceNames.AddRange(serviceNames);
+                }
+            }
+        }
+
+        internal void StartInstance<TService1, TService2, TService3>()
+            where TService1 : IAppCenterService2
+            where TService2 : IAppCenterService2
+            where TService3 : IAppCenterService2
+        {
+            if (!_instanceConfigured)
+            {
+                throw new AppCenterException("App Center has not been configured.");
+            }
+
+            var serviceNames = new List<string>();
+            StartInstanceCore<TService1>(serviceNames);
+            StartInstanceCore<TService2>(serviceNames);
+            StartInstanceCore<TService3>(serviceNames);
+
+            // Enqueue a log indicating which services have been initialized
+            if (serviceNames.Count > 0)
+            {
+                if (InstanceEnabled)
+                {
+                    _channel.EnqueueAsync(new StartServiceLog { Services = serviceNames, DataResidencyRegion = PlatformGetDataResidencyRegion() }).ConfigureAwait(false);
+                }
+                else
+                {
+                    _startedServiceNames ??= [];
+                    _startedServiceNames.AddRange(serviceNames);
+                }
+            }
+        }
+
+        internal void StartInstance<TService1, TService2, TService3, TService4>()
+            where TService1 : IAppCenterService2
+            where TService2 : IAppCenterService2
+            where TService3 : IAppCenterService2
+            where TService4 : IAppCenterService2
+        {
+            if (!_instanceConfigured)
+            {
+                throw new AppCenterException("App Center has not been configured.");
+            }
+
+            var serviceNames = new List<string>();
+            StartInstanceCore<TService1>(serviceNames);
+            StartInstanceCore<TService2>(serviceNames);
+            StartInstanceCore<TService3>(serviceNames);
+            StartInstanceCore<TService4>(serviceNames);
+
+            // Enqueue a log indicating which services have been initialized
+            if (serviceNames.Count > 0)
+            {
+                if (InstanceEnabled)
+                {
+                    _channel.EnqueueAsync(new StartServiceLog { Services = serviceNames, DataResidencyRegion = PlatformGetDataResidencyRegion() }).ConfigureAwait(false);
+                }
+                else
+                {
+                    _startedServiceNames ??= [];
+                    _startedServiceNames.AddRange(serviceNames);
+                }
+            }
+        }
+
+        internal void StartInstance<TService1, TService2, TService3, TService4, TService5>()
+            where TService1 : IAppCenterService2
+            where TService2 : IAppCenterService2
+            where TService3 : IAppCenterService2
+            where TService4 : IAppCenterService2
+            where TService5 : IAppCenterService2
+        {
+            if (!_instanceConfigured)
+            {
+                throw new AppCenterException("App Center has not been configured.");
+            }
+
+            var serviceNames = new List<string>();
+            StartInstanceCore<TService1>(serviceNames);
+            StartInstanceCore<TService2>(serviceNames);
+            StartInstanceCore<TService3>(serviceNames);
+            StartInstanceCore<TService4>(serviceNames);
+            StartInstanceCore<TService5>(serviceNames);
+
+            // Enqueue a log indicating which services have been initialized
+            if (serviceNames.Count > 0)
+            {
+                if (InstanceEnabled)
+                {
+                    _channel.EnqueueAsync(new StartServiceLog { Services = serviceNames, DataResidencyRegion = PlatformGetDataResidencyRegion() }).ConfigureAwait(false);
+                }
+                else
+                {
+                    _startedServiceNames ??= [];
+                    _startedServiceNames.AddRange(serviceNames);
+                }
+            }
+        }
+
+        internal void StartInstance<TService1, TService2, TService3, TService4, TService5, TService6>()
+            where TService1 : IAppCenterService2
+            where TService2 : IAppCenterService2
+            where TService3 : IAppCenterService2
+            where TService4 : IAppCenterService2
+            where TService5 : IAppCenterService2
+            where TService6 : IAppCenterService2
+        {
+            if (!_instanceConfigured)
+            {
+                throw new AppCenterException("App Center has not been configured.");
+            }
+
+            var serviceNames = new List<string>();
+            StartInstanceCore<TService1>(serviceNames);
+            StartInstanceCore<TService2>(serviceNames);
+            StartInstanceCore<TService3>(serviceNames);
+            StartInstanceCore<TService4>(serviceNames);
+            StartInstanceCore<TService5>(serviceNames);
+            StartInstanceCore<TService6>(serviceNames);
+
+            // Enqueue a log indicating which services have been initialized
+            if (serviceNames.Count > 0)
+            {
+                if (InstanceEnabled)
+                {
+                    _channel.EnqueueAsync(new StartServiceLog { Services = serviceNames, DataResidencyRegion = PlatformGetDataResidencyRegion() }).ConfigureAwait(false);
+                }
+                else
+                {
+                    _startedServiceNames ??= [];
+                    _startedServiceNames.AddRange(serviceNames);
+                }
+            }
+        }
+#else
         internal void StartInstance(params Type[] services)
         {
             if (services == null)
@@ -489,6 +972,7 @@ namespace Microsoft.AppCenter
                 }
             }
         }
+#endif
 
         private void StartService(IAppCenterService service)
         {

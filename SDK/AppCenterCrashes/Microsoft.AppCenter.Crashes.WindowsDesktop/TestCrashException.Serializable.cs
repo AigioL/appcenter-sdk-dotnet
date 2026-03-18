@@ -12,7 +12,9 @@ namespace Microsoft.AppCenter.Crashes
         /// <summary>
         /// Deserialization constructor. Not intended for public use.
         /// </summary>
+#pragma warning disable SYSLIB0051
         protected TestCrashException(SerializationInfo info, StreamingContext context) : base(info, context)
+#pragma warning restore SYSLIB0051
         {
         }
     }

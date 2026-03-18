@@ -4,6 +4,7 @@
 using System;
 using System.ComponentModel;
 using System.Configuration;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Reflection;
 
@@ -13,7 +14,11 @@ namespace Microsoft.AppCenter.Utils
     {
         private const string FileName = "AppCenter.config";
         private const string CorruptedConfigurationWarning = "Configuration is corrupted. App Center could work incorrectly.";
+#if NET9_0_OR_GREATER
+        private static readonly global::System.Threading.Lock configLock = new();
+#else
         private static readonly object configLock = new object();
+#endif
         private static Configuration configuration;
 
         internal static string FilePath { get; private set; }
@@ -34,7 +39,16 @@ namespace Microsoft.AppCenter.Utils
             }
         }
 
-        public T GetValue<T>(string key, T defaultValue = default(T))
+#if NET5_0_OR_GREATER
+        [RequiresUnreferencedCode("Generic TypeConverters may require the generic types to be annotated. For example, NullableConverter requires the underlying type to be DynamicallyAccessedMembers All.")]
+#endif
+#pragma warning disable IL2046 // 'RequiresUnreferencedCodeAttribute' annotations must match across all interface implementations or overrides.
+        public T GetValue<
+#pragma warning restore IL2046 // 'RequiresUnreferencedCodeAttribute' annotations must match across all interface implementations or overrides.
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(IApplicationSettings.AllMembersAndInterfaces)]
+#endif
+        T>(string key, T defaultValue = default(T))
         {
             lock (configLock)
             {
@@ -54,7 +68,16 @@ namespace Microsoft.AppCenter.Utils
             return defaultValue;
         }
 
-        public void SetValue(string key, object value)
+#if NET5_0_OR_GREATER
+        [RequiresUnreferencedCode("Generic TypeConverters may require the generic types to be annotated. For example, NullableConverter requires the underlying type to be DynamicallyAccessedMembers All.")]
+#endif
+#pragma warning disable IL2046 // 'RequiresUnreferencedCodeAttribute' annotations must match across all interface implementations or overrides.
+        public void SetValue<
+#pragma warning restore IL2046 // 'RequiresUnreferencedCodeAttribute' annotations must match across all interface implementations or overrides.
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(IApplicationSettings.AllMembersAndInterfaces)]
+#endif
+        T>(string key, T value)
         {
             var invariant = value != null ? TypeDescriptor.GetConverter(value.GetType()).ConvertToInvariantString(value) : null;
             lock (configLock)
@@ -149,7 +172,11 @@ namespace Microsoft.AppCenter.Utils
             try
             {
                 // Get old config path.
+#if NET6_0_OR_GREATER
+                var oldLocation = Environment.ProcessPath;
+#else
                 var oldLocation = Assembly.GetExecutingAssembly().Location;
+#endif
                 var oldPath = Path.Combine(Path.GetDirectoryName(oldLocation), FileName);
                 if (File.Exists(oldPath))
                 {

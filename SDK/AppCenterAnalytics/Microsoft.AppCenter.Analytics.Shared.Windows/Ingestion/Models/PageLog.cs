@@ -10,7 +10,9 @@ namespace Microsoft.AppCenter.Analytics.Ingestion.Models
     /// <summary>
     /// Page view log (as in screens or activities).
     /// </summary>
+#if !USE_SYS_JSON
     [Newtonsoft.Json.JsonObject(JsonIdentifier)]
+#endif
     public partial class PageLog : LogWithProperties
     {
         internal const string JsonIdentifier = "page";
@@ -18,6 +20,9 @@ namespace Microsoft.AppCenter.Analytics.Ingestion.Models
         /// <summary>
         /// Initializes a new instance of the PageLog class.
         /// </summary>
+#if USE_SYS_JSON
+        [System.Text.Json.Serialization.JsonConstructor]
+#endif
         public PageLog()
         {
             CustomInit();
@@ -61,7 +66,7 @@ namespace Microsoft.AppCenter.Analytics.Ingestion.Models
         /// Gets or sets name of the page.
         ///
         /// </summary>
-        [JsonProperty(PropertyName = "name")]
+        [JsonProperty("name")]
         public string Name { get; set; }
 
         /// <summary>

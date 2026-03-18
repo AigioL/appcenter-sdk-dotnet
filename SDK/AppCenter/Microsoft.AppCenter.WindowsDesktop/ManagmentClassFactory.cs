@@ -1,6 +1,9 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+#if USE_WMI_LIGHT
+global using ManagementException = global::WmiLight.WmiException;
+#else
 using System.Management;
 
 namespace Microsoft.AppCenter
@@ -28,9 +31,9 @@ namespace Microsoft.AppCenter
         /// <summary>
         /// Gets or sets the shared instance of ManagmentClassFactory. Should never return null.
         /// </summary>
-        internal static ManagmentClassFactory Instance 
+        internal static ManagmentClassFactory Instance
         {
-            get 
+            get
             {
                 return _instanceField ?? (_instanceField = new ManagmentClassFactory());
             }
@@ -51,3 +54,4 @@ namespace Microsoft.AppCenter
         }
     }
 }
+#endif

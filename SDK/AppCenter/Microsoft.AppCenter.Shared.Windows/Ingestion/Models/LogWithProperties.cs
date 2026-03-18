@@ -5,12 +5,18 @@ namespace Microsoft.AppCenter.Ingestion.Models
 {
     using Newtonsoft.Json;
     using System.Collections.Generic;
+#if USE_SYS_JSON
+    using System.Text.Json.Serialization;
+#endif
 
     public partial class LogWithProperties : Log
     {
         /// <summary>
         /// Initializes a new instance of the LogWithProperties class.
         /// </summary>
+#if USE_SYS_JSON
+        [JsonConstructor]
+#endif
         public LogWithProperties()
         {
             CustomInit();
@@ -52,7 +58,7 @@ namespace Microsoft.AppCenter.Ingestion.Models
         /// Gets or sets additional key/value pair parameters.
         ///
         /// </summary>
-        [JsonProperty(PropertyName = "properties")]
+        [JsonProperty("properties")]
         public IDictionary<string, string> Properties { get; set; }
 
         /// <summary>

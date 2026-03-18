@@ -12,7 +12,9 @@ namespace Microsoft.AppCenter.Crashes.Ingestion.Models
     /// Handled Error log for managed platforms (such as Xamarin, Unity,
     /// Android Dalvik/ART)
     /// </summary>
+#if !USE_SYS_JSON
     [JsonObject(JsonIdentifier)]
+#endif
     public partial class HandledErrorLog : LogWithProperties
     {
         internal const string JsonIdentifier = "handledError";
@@ -20,6 +22,9 @@ namespace Microsoft.AppCenter.Crashes.Ingestion.Models
         /// <summary>
         /// Initializes a new instance of the HandledErrorLog class.
         /// </summary>
+#if USE_SYS_JSON
+        [System.Text.Json.Serialization.JsonConstructor]
+#endif
         public HandledErrorLog()
         {
             CustomInit();
@@ -65,17 +70,17 @@ namespace Microsoft.AppCenter.Crashes.Ingestion.Models
         /// Gets or sets unique identifier for this Error.
         ///
         /// </summary>
-        [JsonProperty(PropertyName = "id")]
+        [JsonProperty("id")]
         public System.Guid? Id { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "binaries")]
+        [JsonProperty("binaries")]
         public IList<Binary> Binaries { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "exception")]
+        [JsonProperty("exception")]
         public Exception Exception { get; set; }
 
         /// <summary>

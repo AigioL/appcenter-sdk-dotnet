@@ -10,7 +10,9 @@ namespace Microsoft.AppCenter.Crashes
     /// <summary>
     /// Error attachment log.
     /// </summary>
+#if !USE_SYS_JSON
     [JsonObject(JsonIdentifier)]
+#endif
     public partial class ErrorAttachmentLog : Log
     {
         internal const string JsonIdentifier = "errorAttachment";
@@ -44,31 +46,31 @@ namespace Microsoft.AppCenter.Crashes
         /// <summary>
         /// Gets or sets error attachment identifier.
         /// </summary>
-        [JsonProperty(PropertyName = "id")]
+        [JsonProperty("id")]
         public System.Guid Id { get; set; }
 
         /// <summary>
         /// Gets or sets error log identifier to attach this log to.
         /// </summary>
-        [JsonProperty(PropertyName = "errorId")]
+        [JsonProperty("errorId")]
         public System.Guid ErrorId { get; set; }
 
         /// <summary>
         /// Gets or sets content type (text/plain for text).
         /// </summary>
-        [JsonProperty(PropertyName = "contentType")]
+        [JsonProperty("contentType")]
         public string ContentType { get; set; }
 
         /// <summary>
         /// Gets or sets file name.
         /// </summary>
-        [JsonProperty(PropertyName = "fileName")]
+        [JsonProperty("fileName")]
         public string FileName { get; set; }
 
         /// <summary>
         /// Gets or sets data encoded as base 64.
         /// </summary>
-        [JsonProperty(PropertyName = "data")]
+        [JsonProperty("data")]
         public byte[] Data { get; set; }
 
         /// <summary>

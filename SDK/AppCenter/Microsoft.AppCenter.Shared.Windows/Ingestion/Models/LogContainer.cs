@@ -15,6 +15,9 @@ namespace Microsoft.AppCenter.Ingestion.Models
         /// <summary>
         /// Initializes a new instance of the LogContainer class.
         /// </summary>
+#if USE_SYS_JSON
+        [System.Text.Json.Serialization.JsonConstructor]
+#endif
         public LogContainer() { }
 
         /// <summary>
@@ -29,7 +32,7 @@ namespace Microsoft.AppCenter.Ingestion.Models
         /// <summary>
         /// Gets or sets the list of logs
         /// </summary>
-        [JsonProperty(PropertyName = "logs")]
+        [JsonProperty("logs")]
         public IList<Log> Logs { get; set; }
 
         /// <summary>

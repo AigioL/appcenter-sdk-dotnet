@@ -11,11 +11,19 @@ namespace Microsoft.AppCenter.Windows.Shared.Utils
     */
     public class UserIdContext
     {
+#if NET9_0_OR_GREATER
+        private static readonly global::System.Threading.Lock UserIdLock = new();
+#else
         private static readonly object UserIdLock = new object();
+#endif
         private static UserIdContext _instanceField;
         private string _userId;
 
-        private readonly object UserIdContextLock = new object();
+#if NET9_0_OR_GREATER
+        private static readonly global::System.Threading.Lock UserIdContextLock = new();
+#else
+        private static readonly object UserIdContextLock = new object();
+#endif
 
         internal UserIdContext()
         {

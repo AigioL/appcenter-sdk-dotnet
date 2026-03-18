@@ -10,7 +10,9 @@ namespace Microsoft.AppCenter.Crashes.Ingestion.Models
     /// <summary>
     /// Error log for managed platforms (such as Android Dalvik/ART).
     /// </summary>
+#if !USE_SYS_JSON
     [JsonObject(JsonIdentifier)]
+#endif
     public partial class ManagedErrorLog : AbstractErrorLog
     {
         internal const string JsonIdentifier = "managedError";
@@ -18,6 +20,9 @@ namespace Microsoft.AppCenter.Crashes.Ingestion.Models
         /// <summary>
         /// Initializes a new instance of the ManagedErrorLog class.
         /// </summary>
+#if USE_SYS_JSON
+        [System.Text.Json.Serialization.JsonConstructor]
+#endif
         public ManagedErrorLog()
         {
             CustomInit();
@@ -74,19 +79,19 @@ namespace Microsoft.AppCenter.Crashes.Ingestion.Models
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "binaries")]
+        [JsonProperty("binaries")]
         public IList<Binary> Binaries { get; set; }
 
         /// <summary>
         /// Gets or sets unique ID for a Xamarin build or another similar
         /// technology.
         /// </summary>
-        [JsonProperty(PropertyName = "buildId")]
+        [JsonProperty("buildId")]
         public string BuildId { get; set; }
 
         /// <summary>
         /// </summary>
-        [JsonProperty(PropertyName = "exception")]
+        [JsonProperty("exception")]
         public Exception Exception { get; set; }
 
         /// <summary>

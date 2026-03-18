@@ -13,7 +13,9 @@ namespace Microsoft.AppCenter.Analytics.Ingestion.Models
     /// Required explicit begin session log (a marker event for analytics
     /// service).
     /// </summary>
+#if !USE_SYS_JSON
     [JsonObject(JsonIdentifier)]
+#endif
     public partial class StartSessionLog : Log
     {
         internal static StartSessionLog Empty = new StartSessionLog();
@@ -22,6 +24,9 @@ namespace Microsoft.AppCenter.Analytics.Ingestion.Models
         /// <summary>
         /// Initializes a new instance of the StartSessionLog class.
         /// </summary>
+#if USE_SYS_JSON
+        [System.Text.Json.Serialization.JsonConstructor]
+#endif
         public StartSessionLog() { }
 
         /// <summary>
