@@ -58,11 +58,6 @@ namespace Microsoft.AppCenter.Utils
                 }
             };
         }
-
-        internal void InvokeUnhandledExceptionOccurred(object sender, Exception exception)
-        {
-            base.InvokeUnhandledExceptionOccurred(sender, new UnhandledExceptionOccurredEventArgs(exception));
-        }
     }
 }
 #endif

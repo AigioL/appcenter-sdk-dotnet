@@ -86,6 +86,11 @@ namespace Microsoft.AppCenter
         {
             UnhandledExceptionOccurred?.Invoke(sender, args);
         }
+
+        public void InvokeUnhandledExceptionOccurred(object sender, Exception exception)
+        {
+            InvokeUnhandledExceptionOccurred(sender, new UnhandledExceptionOccurredEventArgs(exception));
+        }
     }
 }
 
