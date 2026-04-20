@@ -32,7 +32,7 @@
 				<DefineConstants>$(DefineConstants);USE_SYS_JSON;USE_WMI_LIGHT</DefineConstants>
 			</PropertyGroup>
 			<ItemGroup>
-				<PackageReference Include="WmiLight" Version="7.1.0" />
+				<PackageReference Include="WmiLight" Version="7.2.0" />
 			</ItemGroup>
 		</When>
 		<Otherwise>
