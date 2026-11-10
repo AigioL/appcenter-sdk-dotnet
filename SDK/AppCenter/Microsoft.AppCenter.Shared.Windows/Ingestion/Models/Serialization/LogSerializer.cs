@@ -54,7 +54,7 @@ namespace Microsoft.AppCenter.Ingestion.Models.Serialization
         public static void AddLogType(string typeName, Type type)
         {
             var t = new JsonDerivedType(type, typeName);
-            LogJsonTypeInfoResolver.Instance.Options.DerivedTypes.Add(t);
+            LogJsonTypeInfoResolver.Instance.DerivedTypes.Add(t);
         }
 
         public static void AddLogType(IJsonTypeInfoResolver jsonTypeInfoResolver)
@@ -131,6 +131,7 @@ namespace Microsoft.AppCenter.Ingestion.Models.Serialization
     file sealed class DateTimeIsoDateFormatJsonConverter : JsonConverter<DateTime>
     {
         internal static readonly DateTimeIsoDateFormatJsonConverter Instance = new();
+
         public sealed override DateTime Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
             if (reader.TryGetDateTime(out var dt))
@@ -159,12 +160,22 @@ namespace Microsoft.AppCenter.Ingestion.Models.Serialization
 
         internal static readonly List<IJsonTypeInfoResolver> TypeInfoResolverChain = [LogSerializer.Default];
 
-        internal readonly JsonPolymorphismOptions Options = new()
+        internal readonly List<JsonDerivedType> DerivedTypes = [];
+
+        JsonPolymorphismOptions GetJsonPolymorphismOptions()
         {
-            TypeDiscriminatorPropertyName = LogJsonConverter.TypeIdKey,
-            IgnoreUnrecognizedTypeDiscriminators = true,
-            UnknownDerivedTypeHandling = JsonUnknownDerivedTypeHandling.FailSerialization,
-        };
+            var opt = new JsonPolymorphismOptions() // 不可缓存此对象，必须每次创建新的
+            {
+                TypeDiscriminatorPropertyName = LogJsonConverter.TypeIdKey,
+                IgnoreUnrecognizedTypeDiscriminators = true,
+                UnknownDerivedTypeHandling = JsonUnknownDerivedTypeHandling.FailSerialization,
+            };
+            foreach (var it in DerivedTypes)
+            {
+                opt.DerivedTypes.Add(it);
+            }
+            return opt;
+        }
 
         JsonTypeInfo? IJsonTypeInfoResolver.GetTypeInfo(Type type, JsonSerializerOptions options)
         {
@@ -175,7 +186,7 @@ namespace Microsoft.AppCenter.Ingestion.Models.Serialization
                 var jsonTypeInfo = JsonTypeInfo.CreateJsonTypeInfo<Log>(options);
 #pragma warning restore IL3050 // Calling members annotated with 'RequiresDynamicCodeAttribute' may break functionality when AOT compiling.
 #pragma warning restore IL2026 // Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code
-                jsonTypeInfo.PolymorphismOptions = Options;
+                jsonTypeInfo.PolymorphismOptions = GetJsonPolymorphismOptions();
                 return jsonTypeInfo;
             }
             else
