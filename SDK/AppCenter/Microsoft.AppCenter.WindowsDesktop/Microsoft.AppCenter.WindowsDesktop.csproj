@@ -11,6 +11,8 @@
 	</PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="SQLitePCLRaw.bundle_green" Version="2.1.11" />
+		<PackageReference Include="SQLitePCLRaw.lib.e_sqlite3" Version="2.1.14" />
+		<PackageReference Include="SQLitePCLRaw.provider.dynamic_cdecl" Version="2.1.14" />
 	</ItemGroup>
 	<ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.1' or $(TargetFramework.StartsWith('net6.0-windows'))">
 		<PackageReference Include="System.Management" Version="6.0.0" />
